@@ -1,0 +1,25 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: project-collab-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USERNAME:-project_collab}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-project_collab}
+      POSTGRES_DB: ${DB_NAME:-project_collab}
+    ports:
+      - '5434:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'pg_isready -U ${DB_USERNAME:-project_collab} -d ${DB_NAME:-project_collab}',
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres_data:
